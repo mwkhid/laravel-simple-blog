@@ -11,9 +11,9 @@ Route::get('/posts', function () {
     return view('posts.index');
 })->name('posts.index');
 
-Route::get('/posts/create', function () {
-    return view('posts.create');
-})->name('posts.create');
+// Route::get('/posts/create', function () {
+//     return view('posts.create');
+// })->name('posts.create');
 
 Route::get('/posts/show', function () {
     return view('posts.show');
@@ -27,6 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware('auth')->prefix('post')->group(function () {
+    Route::get('/create', function () {
+        return view('posts.create');
+    })->name('post.create');
 });
 
 require __DIR__.'/auth.php';
