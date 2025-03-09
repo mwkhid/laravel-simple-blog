@@ -10,7 +10,8 @@
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     <section>
-                        <form method="post" action="#" class="space-y-6">
+                        <form method="post" action="{{ route('posts.store') }}" class="space-y-6">
+                            @csrf
                             <div>
                                 <x-input-label for="title" :value="__('Title')" />
                                 <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" />
@@ -24,19 +25,22 @@
                             </div>
 
                             <div>
-                                <x-input-label for="published_at" :value="__('Publish Date')" />
-                                <x-text-input id="published_at" name="published_at" type="date" class="mt-1 block w-full" />
+                                <x-input-label for="status" :value="__('Status')" />
+                                <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="draft">{{ __('Draft') }}</option>
+                                    <option value="published">{{ __('Published') }}</option>
+                                    <option value="scheduled">{{ __('Scheduled') }}</option>
+                                </select>
                                 <x-input-error :messages="''" class="mt-2" />
                             </div>
 
-                            <div>
-                                <label for="is_draft" class="inline-flex items-center">
-                                    <input id="is_draft" type="checkbox" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="is_draft">
-                                    <span class="ms-2 text-sm text-gray-600">{{ __('Save as Draft') }}</span>
-                                </label>
+                            <div id="publish_date_container" style="display: none;">
+                                <x-input-label for="publish_date" :value="__('Publish Date')" />
+                                <x-text-input id="publish_date" name="publish_date" type="date" class="mt-1 block w-full" />
+                                <x-input-error :messages="''" class="mt-2" />
                             </div>
 
-                            <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-4" type="submit">
                                 <x-primary-button>{{ __('Post') }}</x-primary-button>
                             </div>
                         </form>
@@ -46,3 +50,14 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    document.getElementById('status').addEventListener('change', function() {
+        var publishDateContainer = document.getElementById('publish_date_container');
+        if (this.value === 'scheduled') {
+            publishDateContainer.style.display = 'block';
+        } else {
+            publishDateContainer.style.display = 'none';
+        }
+    });
+</script>

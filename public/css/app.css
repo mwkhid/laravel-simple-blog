@@ -1,0 +1,36 @@
+.pagination-links nav {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-links nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination-links nav li {
+    margin: 0 5px;
+}
+
+.pagination-links nav a,
+.pagination-links nav span {
+    padding: 4px 8px; /* Adjust padding to make links smaller */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #007bff !important; /* Add !important to override Tailwind CSS */
+    background-color: #f8f9fa; /* Light background color */
+    font-size: 0.875rem; /* Adjust font size to make links smaller */
+}
+
+.pagination-links nav a:hover {
+    background-color: #007bff !important; /* Add !important to override Tailwind CSS */
+    color: white !important; /* Add !important to override Tailwind CSS */
+}
+
+.pagination-links nav .active span {
+    background-color: #007bff !important; /* Add !important to override Tailwind CSS */
+    color: white !important; /* Add !important to override Tailwind CSS */
+    border-color: #007bff !important; /* Add !important to override Tailwind CSS */
+}

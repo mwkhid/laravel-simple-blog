@@ -10,10 +10,11 @@ class Post extends Model
     use HasFactory;
 
     /**
-     * The attributes that aren't mass assignable.
+     * The table associated with the model.
      *
-     * @var array
+     * @var string
      */
+    protected $table = 'posts';
     protected $guarded = ['id'];
 
     /**
@@ -22,5 +23,18 @@ class Post extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the color associated with the post status.
+     */
+    public function getStatusColorAttribute()
+    {
+        return match ($this->status) {
+            'draft' => 'gray',
+            'published' => 'green',
+            'scheduled' => 'blue',
+            default => 'gray',
+        };
     }
 }
