@@ -10,23 +10,23 @@
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     <section>
-                        <form method="post" action="{{ route('posts.store') }}" class="space-y-6">
+                        <form method="post" action="{{ route('posts.store') }}" class="space-y-6" onsubmit="return validateForm()">
                             @csrf
                             <div>
                                 <x-input-label for="title" :value="__('Title')" />
-                                <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" />
+                                <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" required />
                                 <x-input-error :messages="''" class="mt-2" />
                             </div>
 
                             <div>
                                 <x-input-label for="content" :value="__('Content')" />
-                                <textarea id="content" name="content" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="6"></textarea>
+                                <textarea id="content" name="content" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="6" required></textarea>
                                 <x-input-error :messages="''" class="mt-2" />
                             </div>
 
                             <div>
                                 <x-input-label for="status" :value="__('Status')" />
-                                <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                     <option value="draft">{{ __('Draft') }}</option>
                                     <option value="published">{{ __('Published') }}</option>
                                     <option value="scheduled">{{ __('Scheduled') }}</option>
@@ -60,4 +60,14 @@
             publishDateContainer.style.display = 'none';
         }
     });
+
+    function validateForm() {
+        var status = document.getElementById('status').value;
+        var publishDate = document.getElementById('publish_date').value;
+        if (status === 'scheduled' && !publishDate) {
+            alert('Please select a publish date for scheduled posts.');
+            return false;
+        }
+        return true;
+    }
 </script>

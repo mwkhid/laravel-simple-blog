@@ -53,9 +53,7 @@ class PostController extends Controller
                 $post->publish_date = now();
             } elseif ($request->status == 'scheduled') {
                 $post->publish_date = $request->publish_date;
-            } elseif ($request->status == 'draft') {
-                $post->publish_date = now();
-            }
+            } 
             
             $post->save();
 
@@ -71,7 +69,7 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        if ($post->user != Auth::id()) {
+        if ($post->user_id != Auth::id()) {
             abort(403);
         }
         return view('posts.edit', ['post' => $post]);
@@ -79,6 +77,7 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+
         if ($post->user_id != Auth::id()) {
             abort(403);
         }
@@ -87,25 +86,46 @@ class PostController extends Controller
             'title' => 'required|max:60',
             'content' => 'required',
             'status' => 'required|in:draft,published,scheduled',
-            'publish_at' => 'nullable|date|after:now',
+            'publish_date' => 'nullable|date|after:now',
         ]);
 
-        $post->title = $request->title;
-        $post->content = $request->content;
-        $post->status = $request->status;
-        $post->publish_at = $request->publish_at;
-        $post->save();
+        DB::beginTransaction();
 
-        return redirect()->route('posts.index');
+        try {
+            $post->title = $request->title;
+            $post->content = $request->content;
+            $post->status = $request->status;
+            $post->publish_date = $request->publish_date;
+            $post->save();
+
+            DB::commit();
+
+            return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating post: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'An error occurred while updating the post: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy(Post $post)
     {
-        if ($post->user != Auth::id()) {
+        if ($post->user_id != Auth::id()) {
             abort(403);
         }
 
-        $post->delete();
-        return redirect()->route('posts.index');
+        DB::beginTransaction();
+
+        try {
+            $post->delete();
+
+            DB::commit();
+
+            return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting post: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'An error occurred while deleting the post: ' . $e->getMessage()]);
+        }
     }
 }

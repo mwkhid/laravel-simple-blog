@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->date('publish_date');
+            $table->date('publish_date')->nullable();
             $table->string('status'); 
             $table->unsignedBigInteger('user_id'); 
             $table->timestamps();
