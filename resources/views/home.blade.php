@@ -32,9 +32,9 @@
                     </div>
                     @foreach ($posts as $post)
                     <div class="rounded-md border p-5 shadow">
-                        <div class="flex items-center gap-2">
+                        <div class="flex justify-between items-center gap-2">
                             <h3><a href="{{ route('posts.edit', $post->id) }}" class="text-blue-500">{{ $post->title }}</a></h3>
-                            <span class="flex-none rounded bg-{{ $post->status_color }}-100 px-2 py-1 text-{{ $post->status_color }}-800">{{ ucfirst($post->status) }}</span>
+                            <span class="flex-none rounded bg-{{ $post->status_color }}-100 px-2 py-1 text-{{ $post->status_color }}-1000 font-bold">{{ ucfirst($post->status) }}</span>
                         </div>
                         <div class="mt-4 flex items-end justify-between">
                             <div>
@@ -42,7 +42,9 @@
                                 <div>Updated: {{ $post->updated_at->diffForHumans() ?? $post->created_at->diffForHumans()  }}</div>
                             </div>
                             <div>
+                                @if ($post->status === 'published')
                                 <a href="{{ route('posts.show', $post->id) }}" class="text-blue-500">Detail</a> /
+                                @endif
                                 <a href="{{ route('posts.edit', $post->id) }}" class="text-blue-500">Edit</a> /
                                 <button onclick="showDeleteModal({{ $post->id }})" class="text-red-500">Delete</button>
                                 <form id="delete-form-{{ $post->id }}" action="{{ route('posts.destroy', $post->id) }}" method="POST" class="hidden">

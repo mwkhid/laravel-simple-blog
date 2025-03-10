@@ -21,8 +21,13 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
-        if ($post->status != 'published' && $post->user_id != Auth::id()) {
+
+        if ($post->user_id != Auth::id()) {
             abort(403);
+        }
+
+        if ($post->status != 'published') {
+            return redirect()->route('home');
         }
         return view('posts.show', ['post' => $post]);
     }

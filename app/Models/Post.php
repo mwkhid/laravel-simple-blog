@@ -40,7 +40,7 @@ class Post extends Model
         return match ($this->status) {
             'draft' => 'gray',
             'published' => 'green',
-            'scheduled' => 'blue',
+            'scheduled' => 'yellow',
             default => 'gray',
         };
     }
