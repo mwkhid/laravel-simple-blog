@@ -18,6 +18,13 @@ class Post extends Model
     protected $guarded = ['id'];
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true; // This is the default behavior
+
+    /**
      * Get the user that owns the post.
      */
     public function user()

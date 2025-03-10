@@ -12,14 +12,16 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::where('status', 'published')->paginate(10); 
+        $posts = Post::where('status', 'published')
+                     ->orderBy('updated_at', 'desc')
+                     ->paginate(10); 
         return view('posts.index', ['posts' => $posts]);
     }
 
     public function show($id)
     {
         $post = Post::findOrFail($id);
-        if ($post->status != 'published' && $post->user != Auth::id()) {
+        if ($post->status != 'published' && $post->user_id != Auth::id()) {
             abort(403);
         }
         return view('posts.show', ['post' => $post]);
@@ -36,7 +38,6 @@ class PostController extends Controller
             'title' => 'required|max:60',
             'content' => 'required',
             'status' => 'required|in:draft,published,scheduled',
-            'publish_date' => 'nullable|date|after:now',
         ]);
 
         DB::beginTransaction();
@@ -59,7 +60,12 @@ class PostController extends Controller
 
             DB::commit();
 
-            return redirect()->route('posts.index')->with('success', 'Post created successfully.');
+            if ($request->status == 'published') {
+                return redirect()->route('posts.index')->with('success', 'Post created successfully.');
+            } else {
+                return redirect()->route('home')->with('success', 'Post created successfully.');
+            } 
+            
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error saving post: ' . $e->getMessage());
@@ -86,7 +92,6 @@ class PostController extends Controller
             'title' => 'required|max:60',
             'content' => 'required',
             'status' => 'required|in:draft,published,scheduled',
-            'publish_date' => 'nullable|date|after:now',
         ]);
 
         DB::beginTransaction();
@@ -100,7 +105,7 @@ class PostController extends Controller
 
             DB::commit();
 
-            return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+            return redirect()->route('home')->with('success', 'Post updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error updating post: ' . $e->getMessage());

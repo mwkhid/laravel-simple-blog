@@ -23,13 +23,13 @@
                     </x-nav-link>
                 </div>
 
-                @auth
+                {{-- @auth
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
                         {{ __('Create New Post') }}
                     </x-nav-link>
                 </div>
-                @endauth
+                @endauth --}}
             </div>
 
             <!-- Settings Dropdown -->

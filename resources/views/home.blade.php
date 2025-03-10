@@ -22,7 +22,14 @@
             {{-- for authenticated users --}}
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="space-y-6 p-6">
-                    <h2 class="text-lg font-semibold">Your Posts</h2>
+                    <div class="flex justify-between">
+                        <h2 class="text-lg font-semibold">Your Posts</h2>
+                        <div class="flex items-center gap-4">
+                            <a href="{{ route('posts.create') }}">
+                                <x-primary-button>{{ __('Create New Post') }}</x-primary-button>
+                            </a>
+                        </div>
+                    </div>
                     @foreach ($posts as $post)
                     <div class="rounded-md border p-5 shadow">
                         <div class="flex items-center gap-2">
@@ -32,7 +39,7 @@
                         <div class="mt-4 flex items-end justify-between">
                             <div>
                                 <div>Published: {{ $post->publish_date ?? '-' }}</div>
-                                <div>Updated: {{ $post->updated_at ?? $post->created_at  }}</div>
+                                <div>Updated: {{ $post->updated_at->diffForHumans() ?? $post->created_at->diffForHumans()  }}</div>
                             </div>
                             <div>
                                 <a href="{{ route('posts.show', $post->id) }}" class="text-blue-500">Detail</a> /

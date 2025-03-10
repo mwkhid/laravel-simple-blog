@@ -10,7 +10,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $posts = Auth::check() ? Post::where('user_id', Auth::id())->paginate(10) : [];
+        $posts = Auth::check() ? Post::where('user_id', Auth::id())->orderBy('updated_at', 'desc')
+        ->paginate(10) : [];
         return view('home', compact('posts'));
     }
 }

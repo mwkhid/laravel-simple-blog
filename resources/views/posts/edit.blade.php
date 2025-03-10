@@ -37,7 +37,7 @@
 
                             <div id="publish_date_container" style="{{ $post->status == 'scheduled' ? 'display: block;' : 'display: none;' }}">
                                 <x-input-label for="publish_date" :value="__('Publish Date')" />
-                                <x-text-input id="publish_date" name="publish_date" type="date" class="mt-1 block w-full" value="{{ $post->publish_date ? $post->publish_date->format('Y-m-d') : '' }}" />
+                                <x-text-input id="publish_date" name="publish_date" type="date" class="mt-1 block w-full" value="{{ $post->publish_date ? (new \DateTime($post->publish_date))->format('Y-m-d') : '' }}" />
                                 <x-input-error :messages="''" class="mt-2" />
                             </div>
 
