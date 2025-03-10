@@ -21,6 +21,15 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
+
+            // Add foreign key constraints
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
+
+            // Add indexes
+            $table->index('status');
+            $table->index('publish_date');
         });
     }
 

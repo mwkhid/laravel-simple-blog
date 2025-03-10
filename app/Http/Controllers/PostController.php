@@ -106,6 +106,7 @@ class PostController extends Controller
             $post->content = $request->content;
             $post->status = $request->status;
             $post->publish_date = $request->publish_date;
+            $post->updated_by = Auth::id();
             $post->save();
 
             DB::commit();
