@@ -50,3 +50,9 @@ Sample User Credentials:
 
 -   Email: `test@example.com`
 -   Password: `password`
+
+-   Email: `user_a@example.com`
+-   Password: `password`
+
+-   Email: `user_b@example.com`
+-   Password: `password`
