@@ -62,6 +62,11 @@
     });
 
     function validateForm() {
+        var title = document.getElementById('title').value;
+        if (title.length > 60) {
+            alert('Title cannot exceed 60 characters.');
+            return false;
+        }
         var status = document.getElementById('status').value;
         var publishDate = document.getElementById('publish_date').value;
         if (status === 'scheduled' && !publishDate) {
