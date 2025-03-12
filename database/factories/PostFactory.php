@@ -12,14 +12,16 @@ class PostFactory extends Factory
 
     public function definition()
     {
+        $status = $this->faker->randomElement(['draft', 'published', 'scheduled']);
+        $user = $this->faker->randomElement(\App\Models\User::all());
         return [
             'title' => $this->faker->sentence,
             'content' => $this->faker->paragraph,
-            'status' => $this->faker->randomElement(['draft', 'published', 'scheduled']),
-            'user_id' => \App\Models\User::factory(),
-            'created_by' => \App\Models\User::factory(),
-            'updated_by' => \App\Models\User::factory(),
-            'publish_date' => $this->faker->optional()->dateTimeBetween('-1 year', '+1 year'),
+            'status' => $status,
+            'user_id' => $user->id,
+            'created_by' => $user->id,
+            'updated_by' => $user->id,
+            'publish_date' => $status === 'draft' ? null : $this->faker->dateTimeBetween('-1 year', '+1 year'),
         ];
     }
 }
