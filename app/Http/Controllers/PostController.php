@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,21 +17,12 @@ class PostController extends Controller
         $posts = Post::where('status', 'published')
                      ->orderBy('updated_at', 'desc')
                      ->paginate(10); 
-        return view('posts.index', ['posts' => $posts]);
+        return view('posts.index', compact('posts'));
     }
 
-    public function show($id)
+    public function show(Post $post)
     {
-        $post = Post::findOrFail($id);
-
-        if ($post->user_id != Auth::id()) {
-            abort(403);
-        }
-
-        if ($post->status != 'published') {
-            return redirect()->route('home');
-        }
-        return view('posts.show', ['post' => $post]);
+        return view('posts.show', compact('post'));
     }
 
     public function create()
@@ -37,44 +30,32 @@ class PostController extends Controller
         return view('posts.create');
     }
 
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $request->validate([
-            'title' => 'required|max:60',
-            'content' => 'required',
-            'status' => 'required|in:draft,published,scheduled',
-        ]);
-
         DB::beginTransaction();
 
         try {
-            $post = new Post();
-            $post->title = $request->title;
-            $post->content = $request->content;
-            $post->status = $request->status;
-            $post->user_id = Auth::id();
-            $post->created_by = Auth::id();
+            $data = $request->validated();
+            $data['user_id'] = Auth::id();
+            $data['created_by'] = Auth::id();
 
-            if ($request->status == 'published') {
-                $post->publish_date = now();
-            } elseif ($request->status == 'scheduled') {
-                $post->publish_date = $request->publish_date;
-            } 
-            
-            $post->save();
+            if ($data['status'] == 'draft') {
+                $data['publish_date'] = null;
+            } elseif ($data['status'] == 'published') {
+                $data['publish_date'] = now();
+            } elseif ($data['status'] == 'scheduled') {
+                $data['publish_date'] = $request->input('publish_date');
+            }
+
+            $post = Post::create($data);
 
             DB::commit();
 
-            if ($request->status == 'published') {
-                return redirect()->route('posts.index')->with('success', 'Post created successfully.');
-            } else {
-                return redirect()->route('home')->with('success', 'Post created successfully.');
-            } 
-            
+            return redirect()->route('posts.show', $post)->with('success', 'Post created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error saving post: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'An error occurred while saving the post: ' . $e->getMessage()]);
+            Log::error('Error creating post: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'An error occurred while creating the post: ' . $e->getMessage()]);
         }
     }
 
@@ -83,34 +64,33 @@ class PostController extends Controller
         if ($post->user_id != Auth::id()) {
             abort(403);
         }
-        return view('posts.edit', ['post' => $post]);
+        return view('posts.edit', compact('post'));
     }
 
-    public function update(Request $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-
         if ($post->user_id != Auth::id()) {
             abort(403);
         }
 
-        $request->validate([
-            'title' => 'required|max:60',
-            'content' => 'required',
-            'status' => 'required|in:draft,published,scheduled',
-        ]);
-
         DB::beginTransaction();
 
         try {
-            $post->title = $request->title;
-            $post->content = $request->content;
-            $post->status = $request->status;
-            $post->publish_date = $request->publish_date;
-            $post->updated_by = Auth::id();
-            $post->save();
-
+            $data = $request->validated();
+            $data['updated_by'] = Auth::id();
+    
+            if ($data['status'] == 'draft') {
+                $data['publish_date'] = null;
+            } elseif ($data['status'] == 'published') {
+                $data['publish_date'] = now();
+            } elseif ($data['status'] == 'scheduled') {
+                $data['publish_date'] = $request->input('publish_date');
+            }
+    
+            $post->update($data);
+    
             DB::commit();
-
+    
             return redirect()->route('home')->with('success', 'Post updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
