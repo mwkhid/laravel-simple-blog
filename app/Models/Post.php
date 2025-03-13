@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Post extends Model
 {
@@ -14,7 +15,6 @@ class Post extends Model
      *
      * @var string
      */
-    protected $table = 'posts';
     protected $guarded = ['id'];
 
     /**
@@ -22,7 +22,6 @@ class Post extends Model
      *
      * @var bool
      */
-    public $timestamps = true; // This is the default behavior
 
     /**
      * Get the user that owns the post.
@@ -35,13 +34,15 @@ class Post extends Model
     /**
      * Get the color associated with the post status.
      */
-    public function getStatusColorAttribute()
+    protected function statusColor(): Attribute
     {
-        return match ($this->status) {
-            'draft' => 'gray',
-            'published' => 'green',
-            'scheduled' => 'yellow',
-            default => 'gray',
-        };
+        return Attribute::get(function () {
+            return match ($this->status) {
+                'draft' => 'gray',
+                'published' => 'green',
+                'scheduled' => 'yellow',
+                default => 'gray',
+            };
+        });
     }
 }

@@ -9,9 +9,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Post;
+use App\Services\PostService;
 
 class PostController extends Controller
 {
+    protected $postService;
+
+    public function __construct(PostService $postService)
+    {
+        $this->postService = $postService;
+    }
+
     public function index()
     {
         $posts = Post::with('user')
@@ -39,13 +47,7 @@ class PostController extends Controller
             $data = $request->validated();
             $data['user_id'] = Auth::id();
 
-            if ($data['status'] == 'draft') {
-                $data['publish_date'] = null;
-            } elseif ($data['status'] == 'published') {
-                $data['publish_date'] = now();
-            } elseif ($data['status'] == 'scheduled') {
-                $data['publish_date'] = $request->input('publish_date');
-            }
+            $data = $this->postService->handleStatus($data, $request);
 
             $post = Post::create($data);
 
@@ -78,13 +80,7 @@ class PostController extends Controller
         try {
             $data = $request->validated();
     
-            if ($data['status'] == 'draft') {
-                $data['publish_date'] = null;
-            } elseif ($data['status'] == 'published') {
-                $data['publish_date'] = now();
-            } elseif ($data['status'] == 'scheduled') {
-                $data['publish_date'] = $request->input('publish_date');
-            }
+            $data = $this->postService->handleStatus($data, $request);
     
             $post->update($data);
     
