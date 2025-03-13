@@ -14,7 +14,8 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::where('status', 'published')
+        $posts = Post::with('user')
+                     ->where('status', 'published')
                      ->orderBy('updated_at', 'desc')
                      ->paginate(10); 
         return view('posts.index', compact('posts'));
