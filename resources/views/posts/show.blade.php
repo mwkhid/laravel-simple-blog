@@ -9,7 +9,10 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-4 mb-6 sm:p-8 bg-white shadow sm:rounded-lg">
                 <section class="space-y-6">
-                    <h1 class="font-bold text-xl">{{ $post->title }}</h1>
+                    <div class="flex justify-between items-center gap-2">
+                        <h1 class="font-bold text-xl">{{ $post->title }}</h1>
+                        <span class="flex-none rounded bg-{{ $post->status_color }}-100 px-2 py-1 text-{{ $post->status_color }}-1000 font-bold">{{ ucfirst($post->status) }}</span>
+                    </div>
 
                     <div class="flex justify-between">
                         <div class="flex gap-2 items-center">
@@ -18,7 +21,13 @@
                         </div>
                         <div class="flex gap-2 items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="size-4 fill-gray-500"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 8C119 8 8 119 8 256S119 504 256 504 504 393 504 256 393 8 256 8zm92.5 313h0l-20 25a16 16 0 0 1 -22.5 2.5h0l-67-49.7a40 40 0 0 1 -15-31.2V112a16 16 0 0 1 16-16h32a16 16 0 0 1 16 16V256l58 42.5A16 16 0 0 1 348.5 321z"/></svg>
-                            <span class="text-gray-500">{{ $post->created_at->format('Y-m-d') }}</span>
+                            <span class="text-gray-500" title="@if($post->status == 'draft') Created At @else Publish Date @endif">
+                                @if($post->status == 'draft')
+                                    {{ $post->created_at->format('Y-m-d') }}
+                                @else
+                                    {{ \Carbon\Carbon::parse($post->publish_date)->format('Y-m-d') }}
+                                @endif
+                            </span>
                         </div>
                     </div>
 
