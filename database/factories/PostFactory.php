@@ -19,8 +19,6 @@ class PostFactory extends Factory
             'content' => $this->faker->paragraph,
             'status' => $status,
             'user_id' => $user->id,
-            'created_by' => $user->id,
-            'updated_by' => $user->id,
             'publish_date' => $status === 'draft' ? null : $this->faker->dateTimeBetween('-1 year', '+1 year'),
         ];
     }

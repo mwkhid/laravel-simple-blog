@@ -37,7 +37,6 @@ class PostController extends Controller
         try {
             $data = $request->validated();
             $data['user_id'] = Auth::id();
-            $data['created_by'] = Auth::id();
 
             if ($data['status'] == 'draft') {
                 $data['publish_date'] = null;
@@ -77,7 +76,6 @@ class PostController extends Controller
 
         try {
             $data = $request->validated();
-            $data['updated_by'] = Auth::id();
     
             if ($data['status'] == 'draft') {
                 $data['publish_date'] = null;
